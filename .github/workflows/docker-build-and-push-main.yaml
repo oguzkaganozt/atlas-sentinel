@@ -57,8 +57,23 @@ jobs:
             cat arm64.env | sed -e "s/^\s*//" -e "/^#/d" >> $GITHUB_ENV
           fi
 
-      - name: Build 'autoware-openadk'
-        uses: ./.github/actions/docker-build-and-push
+      - name: Build 'Autoware'
+        uses: ./.github/actions/docker-build-push
+        with:
+          bake-target: autoware
+          build-args: |
+            *.platform=linux/amd64
+            *.args.ROS_DISTRO=${{ env.rosdistro }}
+            *.args.BASE_IMAGE=${{ env[format('{0}', matrix.base_image_env)] }}
+            *.args.SETUP_ARGS=${{ matrix.setup-args }}
+            *.args.LIB_DIR=${{ matrix.lib_dir }}
+          tag-suffix: ${{ matrix.additional-tag-suffix }}
+          tag-arch: amd64
+          tag-prefix: ${{ env.rosdistro }}
+          allow-push: true
+
+      - name: Build 'Openadk'
+        uses: ./.github/actions/docker-build-and-push-openadk
         with:
           bake-target: autoware-openadk
           build-args: |
@@ -67,7 +82,8 @@ jobs:
             *.args.BASE_IMAGE=${{ env[format('{0}', matrix.base_image_env)] }}
             *.args.SETUP_ARGS=${{ matrix.setup-args }}
             *.args.LIB_DIR=${{ matrix.lib_dir }}
-          tag-suffix: ${{ matrix.additional-tag-suffix }}-amd64
+          tag-suffix: ${{ matrix.additional-tag-suffix }}
+          tag-arch: amd64
           tag-prefix: ${{ env.rosdistro }}
           allow-push: true
 
