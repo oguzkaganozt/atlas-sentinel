@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <!-- Essential parameters -->
+  <arg name="map_path" description="point cloud and lanelet2 map directory path"/>
+  <arg name="pointcloud_container_name" default="pointcloud_container"/>
+  <arg name="data_path" default="$(env HOME)/autoware_data" description="packages data and artifacts directory path"/>
+
+  <!-- Optional parameters -->
+  <!-- Modules to be launched -->
+  <arg name="launch_map" default="true" description="launch map"/>
+  <arg name="launch_sensing" default="true" description="launch sensing"/>
+  <arg name="launch_sensing_driver" default="true" description="launch sensing driver"/>
+  <arg name="launch_localization" default="true" description="launch localization"/>
+  <arg name="launch_perception" default="true" description="launch perception"/>
+  <!-- Map -->
+  <arg name="lanelet2_map_file" default="lanelet2_map.osm" description="lanelet2 map file name"/>
+  <arg name="pointcloud_map_file" default="pointcloud_map.pcd" description="pointcloud map file name"/>
+  <!-- Perception -->
+  <arg name="perception_mode" default="lidar" description="select perception mode. camera_lidar_radar_fusion, camera_lidar_fusion, lidar_radar_fusion, lidar, radar"/>
+  <arg name="traffic_light_recognition/enable_fine_detection" default="true" description="enable traffic light fine detection"/>
+
+  <!-- Pointcloud container -->
+  <include file="$(find-pkg-share autoware_launch)/launch/pointcloud_container.launch.py">
+    <arg name="use_multithread" value="true"/>
+    <arg name="container_name" value="$(var pointcloud_container_name)"/>
+  </include>
+
+  <!-- Map -->
+  <group if="$(var launch_map)">
+    <include file="$(find-pkg-share autoware_launch)/launch/components/tier4_map_component.launch.xml"/>
+  </group>
+
+  <!-- Sensing -->
+  <group if="$(var launch_sensing)">
+    <include file="$(find-pkg-share autoware_launch)/launch/components/tier4_sensing_component.launch.xml"/>
+  </group>
+
+  <!-- Localization -->
+  <group if="$(var launch_localization)">
+    <include file="$(find-pkg-share autoware_launch)/launch/components/tier4_localization_component.launch.xml"/>
+  </group>
+
+  <!-- Perception -->
+  <group if="$(var launch_perception)">
+    <include file="$(find-pkg-share autoware_launch)/launch/components/tier4_perception_component.launch.xml">
+      <arg name="data_path" value="$(var data_path)"/>
+    </include>
+  </group>
+</launch>
