@@ -16,7 +16,7 @@ RUN --mount=type=ssh \
   && DEBIAN_FRONTEND=noninteractive rosdep install -y --rosdistro "$ROS_DISTRO" --from-paths src --ignore-src
 
 RUN --mount=type=ssh \
-  ./setup-dev-env.sh -y --module planning-control --no-cuda-drivers --runtime openadk \
+  ./setup-dev-env.sh -y --module all --no-cuda-drivers --runtime openadk \
   && pip uninstall -y ansible ansible-core \
   && source /opt/ros/"$ROS_DISTRO"/setup.bash \
   && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
@@ -25,7 +25,7 @@ RUN --mount=type=ssh \
   && vcs import src < autoware.repos \
   && apt-get update \
   && rosdep update \
-  && DEBIAN_FRONTEND=noninteractive rosdep install -y --rosdistro "$ROS_DISTRO" --from-paths src --ignore-src \
+  && DEBIAN_FRONTEND=noninteractive rosdep install -y -t exec --rosdistro "$ROS_DISTRO" --from-paths src --ignore-src \
   && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* "$HOME"/.cache \
   && find /usr/lib/$LIB_DIR-linux-gnu -name "*.a" -type f -delete \
   && find / -name "*.o" -type f -delete \

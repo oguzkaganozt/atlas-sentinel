@@ -15,7 +15,7 @@ RUN --mount=type=ssh \
   && vcs import src < autoware.repos \
   && apt-get update \
   && rosdep update \
-  && DEBIAN_FRONTEND=noninteractive rosdep install -y --ignore-src --from-paths src --rosdistro "$ROS_DISTRO" \
+  && DEBIAN_FRONTEND=noninteractive rosdep install -y -t exec --ignore-src --from-paths src --rosdistro "$ROS_DISTRO" \
   && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* "$HOME"/.cache \
   && find /usr/lib/$LIB_DIR-linux-gnu -name "*.a" -type f -delete \
   && find / -name "*.o" -type f -delete \
@@ -27,7 +27,7 @@ RUN --mount=type=ssh \
     /usr/include /usr/share/doc /usr/lib/gcc /usr/lib/jvm /usr/lib/llvm*
 
 # Copy launch file
-COPY docker/autoware-openadk/modules/perception-localization/perception_localization.launch.xml /autoware/launch/perception-localization.launch.xml
+COPY docker/autoware-openadk/modules/perception-localization/perception_localization.launch.xml /autoware/launch/perception_localization.launch.xml
 
 # Create entrypoint
 COPY docker/autoware-openadk/etc/ros_entrypoint.sh /ros_entrypoint.sh
