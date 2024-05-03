@@ -9,9 +9,7 @@ COPY autoware.repos /autoware/
 
 # Dependencies
 RUN --mount=type=ssh \
-  ./setup-dev-env.sh -y --module all --no-cuda-drivers --runtime openadk \
-  && pip uninstall -y ansible ansible-core \
-  && mkdir src \
+  mkdir src \
   && vcs import src < autoware.repos \
   && apt-get update \
   && rosdep update \
