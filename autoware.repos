@@ -123,7 +123,7 @@ repositories:
     url: https://github.com/autowarefoundation/autoware_individual_params.git
     version: main
   # PIX INTEGRATION
-    # pixkit_param
+  # pixkit_param
   param/autoware_individual_params:
     type: git
     url: https://github.com/pixmoving-moveit/autoware_individual_params.git
