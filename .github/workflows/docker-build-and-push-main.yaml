@@ -68,11 +68,13 @@ jobs:
         uses: ./.github/actions/free-disk-space
 
       - name: Run vcs import
+        if: ${{ matrix.name == 'cuda' }}
         run: |
           mkdir src
           vcs import src < autoware.repos --recursive
 
       - name: Build 'Autoware'
+        if: ${{ matrix.name == 'cuda' }}
         uses: ./.github/actions/docker-build-and-push
         with:
           bake-target: autoware
