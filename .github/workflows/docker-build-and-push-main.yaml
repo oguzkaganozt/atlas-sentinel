@@ -92,7 +92,7 @@ jobs:
           allow-push: true
 
       - name: Build 'Open AD Kit'
-        if: ${{ matrix.name == 'no-cuda' }}
+        if: ${{ matrix.name == 'cuda' }}
         uses: ./.github/actions/docker-build-and-push-openadkit
         with:
           bake-target: openadkit
