@@ -13,7 +13,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: 54 18 * * *
+    - cron: 58 18 * * *
   workflow_dispatch:
     inputs:
       artifacts-destination:
@@ -51,7 +51,8 @@ jobs:
       - name: Check if first day of the month
         id: check_date
         run: echo "::set-output name=is_first_day::$(if [ $(date +'%d') -eq 01 ]; then echo true; else echo false; fi)"
-      
+        if: ${{ github.event_name == 'schedule' }}
+    
       - name: Echo Date for Verification
         run: echo "Today's date is ${{ steps.check_date.outputs.is_first_day }}"
 
