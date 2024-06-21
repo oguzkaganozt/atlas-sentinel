@@ -1,0 +1,11 @@
+name: Check Server Date and Time
+
+on: [workflow_dispatch]
+
+jobs:
+  check-date:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Print current date and time
+      run: date
