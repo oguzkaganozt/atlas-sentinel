@@ -13,7 +13,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: 0 0 1,15 * *
+    - cron: 54 18 * * *
   workflow_dispatch:
     inputs:
       artifacts-destination:
@@ -48,6 +48,13 @@ jobs:
             lib_dir: x86_64
             additional-tag-suffix: -cuda
     steps:
+      - name: Check if first day of the month
+        id: check_date
+        run: echo "::set-output name=is_first_day::$(if [ $(date +'%d') -eq 01 ]; then echo true; else echo false; fi)"
+      
+      - name: Echo Date for Verification
+        run: echo "Today's date is ${{ steps.check_date.outputs.is_first_day }}"
+
       - name: Check out repository
         uses: actions/checkout@v4
 
@@ -84,7 +91,26 @@ jobs:
             *.cache-to=type=registry,ref=ghcr.io/${{ github.repository }}:buildcache-${{ matrix.name }},mode=max
           tag-suffix: ${{ matrix.additional-tag-suffix }}-amd64
           tag-prefix: ${{ needs.load-env.outputs.rosdistro }}
-          allow-push: true
+          bake-images: ${{ matrix.bake-images }}
+          allow-push: ${{ steps.check_date.outputs.is_first_day == 'true'}}
+
+      - name: Build 'Open AD Kit'
+        if: ${{ matrix.name == 'no-cuda' }}
+        uses: ./.github/actions/docker-build-and-push-openadkit
+        with:
+          bake-target: openadkit
+          build-args: |
+            *.platform=linux/amd64
+            *.args.ROS_DISTRO=${{ needs.load-env.outputs.rosdistro }}
+            *.args.BASE_IMAGE=${{ needs.load-env.outputs[format('{0}', matrix.base_image_env)] }}
+            *.args.SETUP_ARGS=${{ matrix.setup-args }}
+            *.args.LIB_DIR=${{ matrix.lib_dir }}
+            *.args.ARCH=amd64
+          tag-suffix: ${{ matrix.additional-tag-suffix }}
+          tag-arch: -amd64
+          tag-prefix: ${{ needs.load-env.outputs.rosdistro }}
+          bake-images: ${{ matrix.bake-images }}
+          allow-push: ${{ steps.check_date.outputs.is_first_day == 'true'}}
 
       - name: Show disk space
         run: |
