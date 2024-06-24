@@ -51,6 +51,7 @@ jobs:
       - name: Check if push day
         run: |
           if [ $(date +'%d') -eq 01 ] || [ $(date +'%d') -eq 15 ]; then echo "IS_PUSH_DAY=true" >> $GITHUB_ENV; else echo "IS_PUSH_DAY=false" >> $GITHUB_ENV; fi
+          echo "Date: $(date +'%d'), Is Push day: $IS_PUSH_DAY"
         if: ${{ github.event_name == 'schedule' }}
 
       - name: Check out repository
