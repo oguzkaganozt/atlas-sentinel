@@ -16,12 +16,16 @@ inputs:
     required: false
   allow-push:
     description: ""
-    default: "true"
+    default: "false"
     required: false
 
 runs:
   using: composite
   steps:
+    - name: echo allow-push
+      run: echo ${{ inputs.allow-push }}
+      shell: bash
+    
     - name: Install jq and vcstool
       run: |
         sudo apt-get -y update
